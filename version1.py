@@ -32,8 +32,9 @@ class Player:
         octave = key_ind // 12
         return (key, octave)
 
-    def play(self):
-        time.sleep(2)
+    def play(self, init_pause=1, key_pause=0.001):
+        pyautogui.PAUSE = key_pause
+        time.sleep(init_pause)
 
         notes = []
         for path in self.midi_paths:
@@ -64,7 +65,7 @@ class Player:
             for i, info in enumerate(notes):
                 note, start, end, state = info
 
-                if state == "NOT_PLAYED" and elapsed >= start and elapsed <= end:
+                if state == "NOT_PLAYED" and elapsed >= start:
                     key, octave = self.note_to_info(note)
                     oct_diff = abs(octave - curr_octave)
 
@@ -74,12 +75,8 @@ class Player:
                         pyautogui.typewrite("z"*oct_diff)
 
                     pyautogui.typewrite(key)
-                    notes[i][3] = "PLAYING"
-                    curr_octave = octave
-
-                elif state == "PLAYING" and elapsed > end:
-                    key, octave = self.note_to_info(note)
                     notes[i][3] = "PLAYED"
+                    curr_octave = octave
 
             if all([x[3]=="PLAYED" for x in notes]):
                 break
