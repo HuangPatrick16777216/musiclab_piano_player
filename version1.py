@@ -67,7 +67,6 @@ class Player:
                 if state == "NOT_PLAYED" and elapsed >= start and elapsed <= end:
                     key, octave = self.note_to_info(note)
                     oct_diff = abs(octave - curr_octave)
-                    curr_octave = octave
 
                     if octave > curr_octave:
                         pyautogui.typewrite("x"*oct_diff)
@@ -76,6 +75,7 @@ class Player:
 
                     pyautogui.typewrite(key)
                     notes[i][3] = "PLAYING"
+                    curr_octave = octave
 
                 elif state == "PLAYING" and elapsed > end:
                     key, octave = self.note_to_info(note)
