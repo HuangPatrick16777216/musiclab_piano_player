@@ -21,8 +21,16 @@ import mido
 
 
 class Player:
+    keys = list("awsedftgyhuj")
+
     def __init__(self):
         self.midi_paths = []
+
+    def note_to_info(self, note):
+        key_ind = note + 9
+        key = self.keys[key_ind % 12]
+        octave = key_ind // 12
+        return (key, octave)
 
     def play(self):
         time.sleep(2)
@@ -42,9 +50,35 @@ class Player:
                     tempo = msg.tempo
                 elif not msg.is_meta and msg.type == "note_on":
                     note = msg.note - 21
-                    if msg.volume == 0:
-                        notes.append((note, starts[note], curr_time))
+                    if msg.velocity == 0:
+                        notes.append([note, starts[note], curr_time, "NOT_PLAYED"])
                     else:
                         starts[note] = curr_time
 
-        print(notes)
+        notes = sorted(notes, key=(lambda x: x[1]))
+
+        curr_octave = 4
+        time_start = time.time()
+        while True:
+            elapsed = time.time() - time_start
+            for i, info in enumerate(notes):
+                note, start, end, state = info
+
+                if state == "NOT_PLAYED" and elapsed >= start and elapsed <= end:
+                    key, octave = self.note_to_info(note)
+                    oct_diff = abs(octave - curr_octave)
+
+                    if octave > curr_octave:
+                        pyautogui.typewrite("x"*oct_diff)
+                    elif octave < curr_octave:
+                        pyautogui.typewrite("z"*oct_diff)
+
+                    pyautogui.typewrite(key)
+                    notes[i][3] = "PLAYING"
+
+                elif state == "PLAYING" and elapsed > end:
+                    key, octave = self.note_to_info(note)
+                    notes[i][3] = "PLAYED"
+
+            if all([x[3]=="PLAYED" for x in notes]):
+                break
