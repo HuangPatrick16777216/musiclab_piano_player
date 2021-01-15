@@ -32,7 +32,7 @@ class Player:
         octave = key_ind // 12
         return (key, octave)
 
-    def play(self, init_pause=1, key_pause=0.001):
+    def play(self, init_pause=1, key_pause=0.001, speed=1):
         pyautogui.PAUSE = key_pause
         time.sleep(init_pause)
 
@@ -62,6 +62,8 @@ class Player:
         time_start = time.time()
         while True:
             elapsed = time.time() - time_start
+            elapsed *= speed
+
             for i, info in enumerate(notes):
                 note, start, end, state = info
 
