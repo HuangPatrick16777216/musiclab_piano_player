@@ -32,7 +32,7 @@ class Player:
         octave = key_ind // 12
         return (key, octave)
 
-    def play(self, init_pause=1, key_pause=0.001, speed=1):
+    def play(self, init_pause=1, key_pause=0.001, speed=1, loop=False):
         pyautogui.PAUSE = key_pause
         time.sleep(init_pause)
 
@@ -82,3 +82,6 @@ class Player:
 
             if all([x[3]=="PLAYED" for x in notes]):
                 break
+
+        if loop:
+            self.play(init_pause=init_pause, key_pause=key_pause, speed=speed, loop=loop)
