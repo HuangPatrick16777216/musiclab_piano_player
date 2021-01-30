@@ -59,6 +59,7 @@ class Player:
         notes = sorted(notes, key=(lambda x: x[1]))
 
         curr_octave = 4
+        octave = 4
         time_start = time.time()
         while True:
             elapsed = time.time() - time_start
@@ -83,5 +84,10 @@ class Player:
             if all([x[3]=="PLAYED" for x in notes]):
                 break
 
+        oct_diff = abs(octave - curr_octave)
+        if octave > curr_octave:
+            pyautogui.typewrite("x"*oct_diff)
+        elif octave < curr_octave:
+            pyautogui.typewrite("z"*oct_diff)
         if loop:
             self.play(init_pause=init_pause, key_pause=key_pause, speed=speed, loop=loop)
